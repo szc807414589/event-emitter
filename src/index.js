@@ -10,13 +10,13 @@ import {
 import createEvent from './event';
 
 class EventEmitter {
-	constructor() {
+	constructor () {
 		this.list = {};//事件缓存列表
 	}
 
 	//私有方法,注册事件
-	_addEvent(key, fn) {
-		if (!this.list[key]) this.list[key] = createEvent(key);
+	_addEvent (key, fn) {
+		!this.list[key] && (this.list[key] = createEvent(key));
 		this.list[key].events.push(fn);
 	}
 
@@ -26,7 +26,7 @@ class EventEmitter {
 	* @params fn 回调函数
 	* 单个注册直接push,多个需要遍历然后每个添加
 	* */
-	register(key, fn) {
+	register (key, fn) {
 		if (isString(key)) {
 			this._addEvent(key, fn);
 		} else if (isArray(key)) {
@@ -35,7 +35,7 @@ class EventEmitter {
 	}
 
 	//触发事件
-	emit(key, args) {
+	emit (key, args) {
 		if (!isString(key)) throw new TypeError('emit key 必须是 string');
 		// 如果缓存列表里没有函数就代表还未注册
 		const curKey = isKeyInList(this.list, key);
@@ -47,9 +47,9 @@ class EventEmitter {
 		// 进入函数,首先 把key push到 emitted
 		this.list[curKey].emitted.push(key);
 		// 缓存参数到 payload ,return
-		cur.payload[key] ?
-			this.list[curKey].payload[key].push(args) :
-			this.list[curKey].payload[key] = [];
+		// cur.payload[key] ?
+		this.list[curKey].payload[key].push(args);
+		// this.list[curKey].payload[key] = [];
 		// 判断emittedArr 是否包含 eventArr(包含的意思就是,把eventArr中的事件都执行了一次)
 		// 此时要考虑wait,每次执行emit 需要emittedTime++
 		// 当wait===emittedTime的时候,才继续执行
@@ -72,26 +72,26 @@ class EventEmitter {
 	}
 
 	//删除事件
-	remove(key, fn) {
+	remove (key, fn) {
 		/*
 		* 可以删除单个事件
 		* 可以删除整个联合事件
 		* 不可以删除联合事件中的某一个
 		* */
-		let curKey = isString(key) ? key : joinArrayKey(key);
-		if (!curKey) return;
-		const fns = this.list[curKey].events;
-		if (!fns && fns.length === 0) return;
+		let curKey = joinArrayKey(key);
+		// if (!curKey) return;
+		// const fns = this.list[curKey].events;
+		// if (!fns) return;
 		if (fn) {
 			this.list[curKey].events =
 				this.list[curKey].events.filter(cb => cb !== fn);
 		} else {
-			fns && (fns.length = 0);
+			this.list[curKey].events.length = 0;
 		}
 	}
 
 	//只触发一次就删除
-	once(key, fn) {
+	once (key, fn) {
 		const cb = (...args) => {
 			fn(...args);
 			this.remove(key, cb);
@@ -100,7 +100,7 @@ class EventEmitter {
 	}
 
 	//等待事件触发 time次 之后才执行回调
-	wait(key, time, fn) {
+	wait (key, time, fn) {
 		// if (isString(key)) {
 		if (time <= 0) throw new Error('wait 次数必须是大于0的整数');
 		//wait主要维护这个waitList,
@@ -110,7 +110,7 @@ class EventEmitter {
 		const cb = (...args) => {
 			waitList.push(...args);
 			if (isString(key)) {
-				if (waitList.length < time ) return;
+				if (waitList.length < time) return;
 			} else {
 				if (waitList.length < time * key.length) return;
 			}
@@ -121,7 +121,7 @@ class EventEmitter {
 	}
 
 	//事件触发 指定 次数后 解绑
-	bindNTimes(key, time, fn) {
+	bindNTimes (key, time, fn) {
 		// if (isString(key)) {
 		if (time <= 0) throw new Error('bindNTimes 次数必须大于0');
 		//bindNTimes 主要维护这个 count,
@@ -152,12 +152,12 @@ const createEventEmitter = (event, cb) => {
 // 	console.log('--------------------fn1-log-start--------------------');
 // 	console.log(data);
 // 	console.log('--------------------fn1-log-end--------------------');
-// 	count++;
-// 	console.log(count);
 // };
 // const fn2 = function (data) {
 // 	console.log('fn2: ' + data);
 // };
+// ee.register('test', fn1);
+// ee.register('test');
 // ee.register('test', fn1);
 // ee.register('test', fn2);
 // ee.emit('test', 'testArgs');

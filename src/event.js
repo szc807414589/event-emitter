@@ -1,7 +1,7 @@
 import { JOIN_STRING } from './constant';
 
 class _CreateEvent {
-	constructor(event, wait = 1) {
+	constructor(event) {
 		// this.eventArr = [].concat(event);
 		const arr = event.split(JOIN_STRING);
 		const temp = {};
@@ -12,7 +12,6 @@ class _CreateEvent {
 		this.events = [];
 		this.emitted = [];
 		this.payload = temp;
-		this.emittedTime = 0;
 	}
 }
 
