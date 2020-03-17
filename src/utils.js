@@ -4,7 +4,6 @@ export const isString = data => Object.prototype.toString.call(data) === '[objec
 export const isArray = data => Object.prototype.toString.call(data) === '[object Array]';
 
 export const joinArrayKey = data => `${ isString(data) ? data : data.join(JOIN_STRING) }`;
-export const isEmpty = (list, key) => list[key] || list[key].length;
 
 //获取list 中key的数组,遍历每个key,用JOIN_STRING切割 再include
 // return register时生成的key值
@@ -33,14 +32,15 @@ export const deleteChild = (parent, child) => {
 	return parent;
 };
 //从payload获取数据
-export const getPayload = (payload, arr, wait) => {
-	//从payload中获取对应key的参数,取前wait位
+export const getPayload = (payload, arr) => {
+	// 从payload中获取对应key的参数,取前wait位
+	/*
+	* 如果wait===1,
+	* */
 	const data = [];
-	arr.forEach((v, i) => {
-		// console.log('--------------------- in getPayload ---------------------');
-		// console.log(payload[v]);
-		// console.log('--------------------- in getPayload ---------------------');
-		data.push(payload[v].slice(0, wait));
+
+	arr.forEach(v => {
+		data.push(payload[v].shift());
 	});
 	return data;
 };

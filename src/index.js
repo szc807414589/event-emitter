@@ -6,9 +6,7 @@ import {
 	isArrayIncludes,
 	deleteChild,
 	getPayload,
-	isEmpty
 } from './utils';
-import { JOIN_STRING } from './constant';
 import createEvent from './event';
 
 class EventEmitter {
@@ -17,10 +15,8 @@ class EventEmitter {
 	}
 
 	//私有方法,注册事件
-	_addEvent(key, fn, wait = 1) {
-		// if (!this.list[key]) this.list[key] = [];
-		// this.list[key].push(createEvent(key, fn));
-		if (!this.list[key]) this.list[key] = createEvent(key, wait);
+	_addEvent(key, fn) {
+		if (!this.list[key]) this.list[key] = createEvent(key);
 		this.list[key].events.push(fn);
 	}
 
@@ -30,25 +26,24 @@ class EventEmitter {
 	* @params fn 回调函数
 	* 单个注册直接push,多个需要遍历然后每个添加
 	* */
-	register(key, fn, wait = 1) {
+	register(key, fn) {
 		if (isString(key)) {
-			this._addEvent(key, fn, wait);
+			this._addEvent(key, fn);
 		} else if (isArray(key)) {
-			this._addEvent(joinArrayKey(key), fn, wait);
+			this._addEvent(joinArrayKey(key), fn);
 		}
 	}
 
 	//触发事件
 	emit(key, args) {
+		if (!isString(key)) throw new TypeError('emit key 必须是 string');
 		// 如果缓存列表里没有函数就代表还未注册
-		if (!isString(key)) throw new Error('emit key 必须是 string');
-		//获取
-		let curKey = isKeyInList(this.list, key);
+		const curKey = isKeyInList(this.list, key);
 		if (!curKey) return;
 
-		const fns = this.list[curKey].events;
 		const cur = this.list[curKey];
-		this.list[curKey].emittedTime++;
+		const fns = cur.events;
+		// this.list[curKey].emittedTime++;
 		// 进入函数,首先 把key push到 emitted
 		this.list[curKey].emitted.push(key);
 		// 缓存参数到 payload ,return
@@ -62,11 +57,12 @@ class EventEmitter {
 			// 如果包含,就从payload 获取data
 			// 传入data 执行fn
 			// 并且在emittedArr中删除第一份eventArr
-			if(cur.emittedTime < cur.wait) return;
-			const data = getPayload(cur.payload, cur.eventKeyArr, cur.wait);
+			// if(cur.emittedTime < cur.wait) return;
+			const data = getPayload(cur.payload, cur.eventKeyArr);
 			// console.log('--------------------- in emit ---------------------');
 			// console.log(data);
 			// console.log('--------------------- in emit ---------------------');
+			// fns.forEach(fn => fn(args));
 			fns.forEach(fn => fn(...data));
 			this.list[curKey].emitted = deleteChild(cur.emitted, cur.eventKeyArr);
 		}
@@ -112,18 +108,16 @@ class EventEmitter {
 		//达到 time次 的时候才把waitList 传入fn
 		let waitList = [];
 		const cb = (...args) => {
-
 			waitList.push(...args);
-			// if (waitList.length < time) return;
-			// console.log('--------------------- in wait ---------------------');
-			// console.log(...args);
-			// console.log(waitList);
-			// console.log('--------------------- in wait ---------------------');
+			if (isString(key)) {
+				if (waitList.length < time ) return;
+			} else {
+				if (waitList.length < time * key.length) return;
+			}
 			fn(...waitList);
 			waitList = [];
 		};
-		this.register(key, fn, time);
-		// }
+		return this.register(key, cb, time);
 	}
 
 	//事件触发 指定 次数后 解绑
@@ -140,29 +134,30 @@ class EventEmitter {
 				this.remove(key, cb);
 			}
 		};
-		this.register(key, cb);
+		return this.register(key, cb);
 	}
-
-	// }
 }
 
 const createEventEmitter = (event, cb) => {
 	const eventEmitter = new EventEmitter();
-	if (event && cb) {
-		eventEmitter.register(event, cb);
-	}
+	// if (event && cb) {
+	// 	eventEmitter.register(event, cb);
+	// }
 	return eventEmitter;
 };
 
-const ee = createEventEmitter();
-const fn1 = function (...data) {
-	console.log('--------------------fn1-log-start--------------------');
-	console.log(...data);
-	console.log('--------------------fn1-log-end--------------------');
-};
-const fn2 = function (data) {
-	console.log('fn2: ' + data);
-};
+// const ee = createEventEmitter();
+// let count = 0;
+// const fn1 = function (...data) {
+// 	console.log('--------------------fn1-log-start--------------------');
+// 	console.log(data);
+// 	console.log('--------------------fn1-log-end--------------------');
+// 	count++;
+// 	console.log(count);
+// };
+// const fn2 = function (data) {
+// 	console.log('fn2: ' + data);
+// };
 // ee.register('test', fn1);
 // ee.register('test', fn2);
 // ee.emit('test', 'testArgs');
@@ -187,12 +182,20 @@ const fn2 = function (data) {
 /********************/
 /********************/
 /********************/
-ee.wait('test-wait', 2, fn1);
-ee.emit('test-wait', 'test-wait1');
-ee.emit('test-wait', 'test-wait2');
-// ee.emit('test-wait','test-wait3');
-// ee.emit('test-wait','test-wait4');
-//  wait ==========> no ok
+// ee.wait('test-wait', 2, fn1);
+// ee.emit('test-wait', 'test1');
+// ee.emit('test-wait', 'test12');
+// ee.wait(['test-wait', 'test-wait1'], 2, fn1);
+// ee.emit('test-wait', 'test-wait1');
+// ee.emit('test-wait1', 'test-wait2');
+// ee.emit('test-wait', 'test-wait3');
+// ee.emit('test-wait1', 'test-wait4');
+//
+// ee.emit('test-wait', 'test-wait1');
+// ee.emit('test-wait1', 'test-wait2');
+// ee.emit('test-wait', 'test-wait3');
+// ee.emit('test-wait1', 'test-wait4');
+//  wait ==========>  ok
 /********************/
 /********************/
 /********************/
@@ -213,13 +216,13 @@ ee.emit('test-wait', 'test-wait2');
 
 // ee.remove('test1');
 // ee.emit('test', 'test222');
-console.log('------------end------------');
+// console.log('------------end------------');
 // console.log(ee.list.test[0]);
-console.log(ee);
+// console.log(ee);
 // console.log(ee.list.test.events);
 // console.log(ee.list.test.eventKeyArr);
 // console.log(ee.list.test.emitted);
-// console.log(ee.list['test1__EVENT_EMITTER_SPLIT_BY_SZC__test2'].payload);
+// console.log(ee.list['test-wait'].payload);
 
 
-// export default createEventEmitter;
+export default createEventEmitter;

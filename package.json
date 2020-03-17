@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --reporter=html mocha  --require @babel/register"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,9 @@
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.7",
-    "@babel/register": "^7.8.6"
+    "@babel/register": "^7.8.6",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0"
   }
 }

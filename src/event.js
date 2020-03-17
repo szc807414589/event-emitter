@@ -12,7 +12,6 @@ class _CreateEvent {
 		this.events = [];
 		this.emitted = [];
 		this.payload = temp;
-		this.wait = wait;
 		this.emittedTime = 0;
 	}
 }
