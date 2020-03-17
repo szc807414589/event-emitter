@@ -37,6 +37,9 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+dist/
+.ncy_output/
+*.lock
 
 # TypeScript v1 declaration files
 typings/
