@@ -1,4 +1,7 @@
-
+# Javascript 自定义事件代理
+[![Build Status](https://travis-ci.org/szc807414589/event-emitter.svg?branch=master)](https://travis-ci.org/szc807414589/event-emitter)
+[![codecov](https://codecov.io/gh/JohnApache/events-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/JohnApache/events-proxy)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
 *****
 + 插件主要特点：
