@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html mocha  --require @babel/register",
+    "test": "nyc --reporter=text mocha  --require @babel/register",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "build": "rollup -c"
   },
   "keywords": [],
