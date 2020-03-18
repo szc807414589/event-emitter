@@ -1,7 +1,7 @@
 {
-  "name": "@szc/EventEmitter",
+  "name": "event-emitter-zz",
   "version": "1.0.0",
-  "description": "自定义事件代理",
+  "description": "发布-订阅",
   "main": "dist/eventsEmitter.js",
   "scripts": {
     "test": "nyc --reporter=text mocha  --require @babel/register",

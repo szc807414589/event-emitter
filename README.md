@@ -3,6 +3,8 @@
 [![codecov](https://codecov.io/gh/szc807414589/event-emitter/branch/master/graph/badge.svg)](https://codecov.io/gh/szc807414589/event-emitter)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
+[![NPM](https://nodei.co/npm/event-emitter-zz.png)](https://nodei.co/npm/event-emitter-zz/)
+
 *****
 + 插件主要特点：
     - 深层嵌套回调函数，以事件模式完全解除了嵌套的问题, 解耦复杂业务逻辑
