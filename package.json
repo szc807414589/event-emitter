@@ -1,16 +1,21 @@
 {
-  "name": "EventEmitter",
+  "name": "@szc/EventEmitter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "自定义事件代理",
+  "main": "dist/eventsEmitter.js",
   "scripts": {
     "test": "nyc --reporter=text mocha  --require @babel/register",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "build": "rollup -c"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "轻量自定义事件代理插件",
+    "解除回调地狱问题",
+    "全局订阅模式",
+    "UMD规范"
+  ],
+  "author": "szc807414589",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-runtime": "^7.8.3",
